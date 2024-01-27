@@ -16,7 +16,7 @@ pipeline {
         stage("test") {
             when {
                 expression {
-                    param.executeTests
+                    param.executeTests == true
                 }
             }
             steps {
