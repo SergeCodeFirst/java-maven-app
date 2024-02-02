@@ -1,7 +1,7 @@
 def gv
+
 pipeline {
     agent any
-
     parameters {
         choice (name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: "versions to chose, to deploy on prod")
         booleanParam(name: 'executeTests', defaultValue: true, description: 'Run tests during the build')
@@ -19,7 +19,7 @@ pipeline {
         stage("build") {
             steps {
                 script {
-                    gv.buildApp
+                    gv.buildApp()
                 }
             }
         }
@@ -32,7 +32,7 @@ pipeline {
             }
             steps {
                 script {
-                    gv.testApp
+                    gv.testApp()
                 }
             }
         }
@@ -40,7 +40,7 @@ pipeline {
         stage("deploy") {
             steps {
                 script {
-                    gv.deployApp
+                    gv.deployApp()
                 }
             }
         }
