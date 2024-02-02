@@ -2,47 +2,40 @@ def gv
 
 pipeline {
     agent any
-    parameters {
-        choice (name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: "versions to chose, to deploy on prod")
-        booleanParam(name: 'executeTests', defaultValue: true, description: 'Run tests during the build')
+    tools {
+        maven "maven-3.9"
     }
-    
     stages {
-        stage("init") {
+        // building java artifact
+        stage("build jar") {
             steps {
                 script{
-                    gv = load "myscript.groovy"
+                    echo "Building the applicattion..."
+                    sh "mvn package"
                 }
+                
             }
         }
         
-        stage("build") {
+        stage("build docker image") {
             steps {
-                script {
-                    gv.buildApp()
+                script{
+                    echo "Building the docker image..."
+                    // accessing our docker hub credention from jenkins
+                    withCredentials([usernamePassword(credentialsId: "docker-hub-repo", passwordVariable: "PASS", usernameVariable: "USER")]){
+                        // create docker image, sigin to docker hub and push or image to the demo-app repo
+                        sh "docker build -t sergevismok/demo-app:jma-2.0 ."
+                        sh "echo $PASS | docker login -u $USER --password-stdin"
+                        sh "docker push sergevismok/demo-app:jma-2.0"
+                    }
                 }
+                
             }
         }
-
-        stage("test") {
-            when {
-                expression {
-                    params.executeTests
-                }
-            }
-            steps {
-                script {
-                    gv.testApp()
-                }
-            }
-        }
-
         stage("deploy") {
             steps {
-                script {
-                    env.ENV = input message: "Select the environment to deploy to", ok: "Done", parameters: [choice(name: 'ONE', choices: ['dev', 'staging', 'prod'], description: "")]
-                    gv.deployApp()
-                    echo "Deploying to ${ENV}..."
+                script{
+                echo "Deploying the applicattion..."
                 }
             }
         }

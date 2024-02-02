@@ -105,7 +105,7 @@ pipeline {
                 // execute the script of the function in myscript.groovy
                 script {
                     // define input inside  script
-                    env.ENV = input message: "Select the environment to deploy to", ok "Done", parameters: [choice (name: 'ONE', choices: ['dev', 'staging', 'prod'], description: "versions to chose, to deploy on prod")]
+                    env.ENV = input message: "Select the environment to deploy to", ok: "Done", parameters: [choice(name: 'ONE', choices: ['dev', 'staging', 'prod'], description: "")]
                     gv.deployApp()
                     echo "Deploying to ${ONE}..."
                     echo "Deploying to ${TWO}..."
