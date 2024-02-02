@@ -50,8 +50,9 @@ pipeline {
             }
 
             // the script block let you wirte groovy scipt directly 
-            script{
-                    def var = 
+            // execute the script of the function in myscript.groovy
+            script {
+                    gv.buildApp()
                 }
 
             steps {
@@ -64,7 +65,12 @@ pipeline {
         // The "test" stage contains two parallel stages: "unit_tests" and "integration_tests".
         // These two sub-stages will run concurrently (in parallel).
         stage("test") {
+            // execute the script of the function in myscript.groovy
+            script {
+                    gv.testApp()
+                }
             // stage execute only if the branch name is "dev" or "main"
+
             when {
                 expression {
                     BRANCH_NAME == "dev" || BRANCH_NAME == "main"
@@ -86,10 +92,24 @@ pipeline {
         // The "deploy" stage will only start after The "test" stage is done, which means
         // "unit_tests" and "integration_tests" are completed.
         stage("deploy") {
+            // allow user to provide input 
+            input {
+                message "Select the environment to deploy to"
+                ok "Done"
+                parameters {
+                    choice (name: 'ENV', choices: ['dev', 'staging', 'prod'], description: "versions to chose, to deploy on prod")
+                }
+            }
+
             steps {
+                // execute the script of the function in myscript.groovy
+                script {
+                    gv.deployApp()
+                }
                 echo 'Deploying the application...'
                 
                 // using parameter
+                echo "Deploying to ${ENV}"
                 echo "Deploying the application version ${params.VERSION}..."
                 
                 // use server credential
