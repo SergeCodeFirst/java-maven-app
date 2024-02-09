@@ -1,3 +1,8 @@
+#!/user/bin/env groovy
+@Library('jenkins-shared-library')
+def gv
+// @Library('jenkins-shared-library')_ // keep "_" if after the import we have the pipeline tag
+
 pipeline {
     agent any
     tools {
@@ -14,14 +19,14 @@ pipeline {
         stage("build jar") {
             steps {
                 script{
-                    gv.buildJar()
+                    buildJar()
                 }
             }
         }
         stage ("build stage") {
             steps {
                 script {
-                    gv.buildImageAndPushToDocker()
+                    buildImageAndPushToDocker()
                 }
             }
         }
