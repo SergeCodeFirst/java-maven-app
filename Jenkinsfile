@@ -1,35 +1,34 @@
 pipeline {
     agent any
+    tools {
+        maven 'Maven'
+    }
     stages {
-        stage("Test") {
+        stage ("init") {
             steps {
-                script{
-                    echo "Testing the application..."
-                    echo "Executing pipeline for branch $BRANCH_NAME"
+                script {
+                    gv = load "script.groovy"
                 }
             }
         }
         stage("build jar") {
-            when {
-                expression {
-                    BRANCH_NAME == "main"
-                }
-            }
             steps {
                 script{
-                    echo "Building the application..."
+                    gv.buildJar()
+                }
+            }
+        }
+        stage ("build stage") {
+            steps {
+                script {
+                    gv.buildImageAndPushToDocker()
                 }
             }
         }
         stage("deploy") {
-            when {
-                expression {
-                    BRANCH_NAME == "main"
-                }
-            }
             steps {
                 script{
-                    echo "Deploying the application..."
+                    gv.deployApp()
                 }
             }
         }
