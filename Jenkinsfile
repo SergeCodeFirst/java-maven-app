@@ -1,5 +1,10 @@
 #!/user/bin/env groovy
-@Library('jenkins-shared-library')
+// @Library('jenkins-shared-library') // global import from jenkins (we add it there in a global library)
+library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
+    [$class: 'GitSCMSource',
+    remote: 'https://github.com/SergeCodeFirst/jenkins-shared-library.git',
+    credentialsId: 'github-credentials'
+    ])
 def gv
 // @Library('jenkins-shared-library')_ // keep "_" if after the import we have the pipeline tag
 
