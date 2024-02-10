@@ -23,10 +23,12 @@ pipeline {
                 }
             }
         }
-        stage ("build stage") {
+        stage ("build and push image stage") {
             steps {
                 script {
-                    buildImageAndPushToDocker "sergevismok/demo-app:jma-3.0"
+                    dockerBuildImage "sergevismok/demo-app:jma-3.0"
+                    dockerLogin()
+                    dockerPush "sergevismok/demo-app:jma-3.0"
                 }
             }
         }
