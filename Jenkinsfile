@@ -26,7 +26,7 @@ pipeline {
         stage ("build stage") {
             steps {
                 script {
-                    buildImageAndPushToDocker()
+                    buildImageAndPushToDocker "sergevismok/demo-app:jma-3.0"
                 }
             }
         }
