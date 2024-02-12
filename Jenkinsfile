@@ -5,16 +5,16 @@ pipeline {
             steps {
                 script{
                     echo "Testing the application..."
-                    echo "Executing pipeline for branch $BRANCH_NAME"
+//                     echo "Executing pipeline for branch $BRANCH_NAME"
                 }
             }
         }
         stage("build jar") {
-            when {
-                expression {
-                    BRANCH_NAME == "main"
-                }
-            }
+//             when {
+//                 expression {
+//                     BRANCH_NAME == "main"
+//                 }
+//             }
             steps {
                 script{
                     echo "Building the application..."
@@ -22,11 +22,11 @@ pipeline {
             }
         }
         stage("deploy") {
-            when {
-                expression {
-                    BRANCH_NAME == "main"
-                }
-            }
+//             when {
+//                 expression {
+//                     BRANCH_NAME == "main"
+//                 }
+//             }
             steps {
                 script{
                     echo "Deploying the application..."
