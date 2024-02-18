@@ -46,7 +46,6 @@ pipeline {
                 }
             }
         }
-
         stage('Commit version Update') {
             steps{
                 script {
