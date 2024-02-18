@@ -1,4 +1,4 @@
-// add auto tigger test 5
+// add auto tigger test 6
 def gv
 
 pipeline {   
