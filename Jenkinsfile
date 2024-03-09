@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script{
                     echo "Start Deploying the image to EC2..."
-                    def dockerCmd = "docker run -p 8080:8080 -d ${IMAGE_NAME}"
+                    def dockerCmd = "docker run -p 8080:8080 -d ${env.IMAGE_NAME}"
                     sshagent(['ec2-server-key']) {
                         sh "ssh -o StrictHostKeyChecking=no ec2-user@54.90.134.212 ${dockerCmd}"
                     }
