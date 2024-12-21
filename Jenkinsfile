@@ -22,6 +22,14 @@ pipeline {
             steps {
                 script{
                     echo 'building application jar...'
+                    echo 'Checking files in the current directory:'
+                    sh 'ls -a' // List all files to verify the presence of the POM and other required files.
+                    echo 'Checking Git status and branch:'
+                    sh '''
+                        git branch --show-current // Show the current branch
+                        git status
+                    '''
+                    // Call the custom function to build the jar.
                     buildJar()
                 }
             }
