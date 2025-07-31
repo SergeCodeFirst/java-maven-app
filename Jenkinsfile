@@ -1,34 +1,17 @@
 pipeline {
     agent any
-    tools {
-        maven 'maven-3.9'
-    }
     stages {
-        stage ("init") {
+        stage ("copy files to ansible server") {
             steps {
                 script {
-                    gv = load "script.groovy"
-                }
-            }
-        }
-        stage("build jar") {
-            steps {
-                script{
-                    gv.buildJar()
-                }
-            }
-        }
-        stage ("build stage") {
-            steps {
-                script {
-                    gv.buildImageAndPushToDocker()
-                }
-            }
-        }
-        stage("deploy") {
-            steps {
-                script{
-                    gv.deployApp()
+                    echo "copying all necessary files to ansible control node"
+                    sshagent(['ansible-server-key']) {
+                        sh "scp -o StrictHostKeyChecking=no ansible/* root@165.22.5.32:/root"
+
+                        withCredentials([sshUserPrivateKey(credentialsId: 'ec2-server-key', keyFileVariable:'keyfile', usernameVariable:'user')]) {
+                            sh "scp ${keyfile} root@165.22.5.32:/root/ssh-key.pem"
+                        }
+                    }
                 }
             }
         }
