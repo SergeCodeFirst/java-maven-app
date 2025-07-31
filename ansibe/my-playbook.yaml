@@ -1,0 +1,58 @@
+---
+# WAIT FOR SSH TO BE AVAILABLE ON SERVER
+- name: Wait for SSH connection is possible (Server is running)
+  hosts: all
+  tasks:
+    - name: Ensure SSH port open
+      wait_for:
+        port: 22
+        delay: 10
+        timeout: 100
+        search_regex: OpenSSH
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+      vars:
+        ansible_connection: local
+        ansible_python_interpreter: /usr/bin/python3
+
+# INSTALL DOCKER
+- name: Install Docker
+  hosts: all
+  become: yes
+  tasks:
+    - name: Make sure Docker is installed
+      yum:
+        name: docker
+        update_cache: yes
+        state: present
+
+    - name: Start docker daemon
+      systemd:
+        name: docker
+        state: started
+
+# DOWNLOAD DOCKER-COMPOSE ON EC2 SERVER
+- name: Install Docker-compose
+  hosts: all
+  become: yes
+  become_user: sergio
+  tasks:
+    - name: Create docker-compose directory
+      file:
+        path: ~/.docker/cli-plugins
+        state: directory
+
+    - name: Get Architecture of remote machine name
+      shell: uname -m
+      register: remote_arch_name
+    #    - debug: msg={{remote_arch_name}}
+
+    - name: Get the Name of the remote machine's Operating System (OS)
+      shell: uname -s
+      register: remote_os_name
+    #    - debug: msg={{remote_os_name}}
+
+    - name: Download docker compose binary file
+      get_url:
+        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{remote_os_name.stdout}}-{{remote_arch_name.stdout}}"
+        dest: ~/.docker/cli-plugins/docker-compose
+        mode: +x
